@@ -46,6 +46,11 @@ class solr (
   $download_url_template = $solr::params::download_url_template
 ) inherits solr::params {
 
+  File {
+    owner => 'jetty',
+    group => 'jetty'
+  }
+
   class {'solr::install': } ->
   class {'solr::config':
     cores                  => $cores,
