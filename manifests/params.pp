@@ -7,10 +7,16 @@
 #
 class solr::params {
 
-  $jetty_home = '/usr/share/jetty'
-  $solr_home = '/usr/share/solr'
-  $solr_version = '4.5.0'
-  $cores = ['default']
+  $cores                 = ['default']
+
+  $solr_version          = '4.2.0'
+
+  $solr_home             = '/usr/share/solr'
+  $jetty_home            = '/usr/share/jetty'
+
+  $filename_template     = 'solr-<%= @solr_version -%>'
+  $archive_template      = '<%= @filename -%>.tgz'
+  $download_url_template = 'http://archive.apache.org/dist/lucene/solr/<%= @solr_version -%>/<%= @archive %>'
 
 }
 

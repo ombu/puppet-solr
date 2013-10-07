@@ -13,15 +13,15 @@
 # - Links solr home directory to jetty webapps directory
 #
 class solr::config(
-  $cores = 'UNSET',
+  $cores                  = $solr::params::cores,
+  $jetty_home             = $solr::params::jetty_home,
+  $solr_home              = $solr::params::solr_home,
+  $solr_version           = $solr::params::solr_version,
+  $filename_template      = $solr::params::filename_template,
+  $archive_template       = $solr::params::archive_template,
+  $download_url_template  = $solr::params::download_url_template
 ) {
-  include solr::params
 
-  $jetty_home     = $::solr::params::jetty_home
-  $solr_home      = $::solr::params::solr_home
-  $solr_version   = $::solr::params::solr_version
-  $file_name      = "solr-${solr_version}.tgz"
-  $download_site  = 'http://www.eng.lsu.edu/mirrors/apache/lucene/solr'
 
   #Copy the jetty config file
   file { '/etc/default/jetty':
@@ -31,34 +31,38 @@ class solr::config(
   }
 
   file { $solr_home:
-    ensure    => directory,
-    owner     => 'jetty',
-    group     => 'jetty',
-    require   => Package['jetty'],
+    ensure  => directory,
+    owner   => 'jetty',
+    group   => 'jetty',
+    require => Package['jetty'],
   }
+
+  $filename = inline_template($filename_template)
+  $archive = inline_template($archive_template)
+  $download_url = inline_template($download_url_template)
 
   # download only if WEB-INF is not present and tgz file is not in /tmp:
   exec { 'solr-download':
-    command   =>  "wget ${download_site}/${solr_version}/${file_name}",
-    cwd       =>  '/tmp',
-    creates   =>  "/tmp/${file_name}",
-    onlyif    =>  "test ! -d ${solr_home}/WEB-INF && test ! -f /tmp/${file_name}",
-    timeout   =>  0,
-    require   => File[$solr_home],
+    command => "wget ${download_url}",
+    cwd     => '/tmp',
+    creates => "/tmp/${archive}",
+    onlyif  => "test ! -d ${solr_home}/WEB-INF && test ! -f /tmp/${archive}",
+    timeout => 0,
+    require => File[$solr_home],
   }
 
   exec { 'extract-solr':
-    path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
-    command   =>  "tar xzvf ${file_name}",
-    cwd       =>  '/tmp',
-    onlyif    =>  "test -f /tmp/${file_name} && test ! -d /tmp/solr-${solr_version}",
-    require   =>  Exec['solr-download'],
+    path    => ['/usr/bin', '/usr/sbin', '/bin'],
+    command => "tar xzvf ${archive}",
+    cwd     => '/tmp',
+    onlyif  => "test -f /tmp/${archive} && test ! -d /tmp/${filename}",
+    require => Exec['solr-download'],
   }
 
   # have to copy logging jars separately from solr 4.3 onwards
   exec { 'copy-solr':
     path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
-    command   =>  "jar xvf /tmp/solr-${solr_version}/dist/solr-${solr_version}.war; cp /tmp/solr-${solr_version}/example/lib/ext/*.jar WEB-INF/lib",
+    command   =>  "jar xvf /tmp/${filename}/dist/solr-${solr_version}.war; cp /tmp/${filename}/example/lib/ext/*.jar WEB-INF/lib",
     cwd       =>  $solr_home,
     onlyif    =>  "test ! -d ${solr_home}/WEB-INF",
     require   =>  Exec['extract-solr'],

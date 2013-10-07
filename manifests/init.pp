@@ -36,19 +36,24 @@
 # Copyright 2012-2013 Vamsee Kanakala, unless otherwise noted.
 #
 class solr (
-  $cores      = 'UNSET'
-) {
-
-  include solr::params
-
-  $all_cores = $cores ? {
-    'UNSET'   => $::solr::params::cores,
-    default   => $cores,
-  }
+  $cores                 = $solr::params::cores,
+  $jetty_home            = $solr::params::jetty_home,
+  $solr_home             = $solr::params::solr_home,
+  $solr_version          = $solr::params::solr_version,
+  $filename_template     = $solr::params::filename_template,
+  $archive_template      = $solr::params::archive_template,
+  $download_url_template = $solr::params::download_url_template
+) inherits solr::params {
 
   class {'solr::install': } ->
   class {'solr::config':
-    cores => $all_cores
+    cores                  => $cores,
+    jetty_home             => $jetty_home,
+    solr_home              => $solr_home,
+    solr_version           => $solr_version,
+    filename_template      => $filename_template,
+    archive_template       => $archive_template,
+    download_url_template  => $download_url_template
   } ~>
   class {'solr::service': } ->
   Class['solr']
