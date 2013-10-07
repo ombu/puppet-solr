@@ -10,7 +10,7 @@ class solr::params {
   $cores                 = ['default']
   $core_conf_source_uri  = 'puppet:///modules/solr/conf',
 
-  $solr_version          = '4.2.0'
+  $solr_version          = '4.5.0'
 
   $solr_home             = '/usr/share/solr'
   $jetty_home            = '/usr/share/jetty'
