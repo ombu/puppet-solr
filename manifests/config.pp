@@ -14,6 +14,7 @@
 #
 class solr::config(
   $cores                  = $solr::params::cores,
+  $core_conf_source_uri   =  $core_conf_source_uri,
   $jetty_home             = $solr::params::jetty_home,
   $solr_home              = $solr::params::solr_home,
   $solr_version           = $solr::params::solr_version,
@@ -62,7 +63,7 @@ class solr::config(
   # have to copy logging jars separately from solr 4.3 onwards
   exec { 'copy-solr':
     path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
-    command   =>  "jar xvf /tmp/${filename}/dist/solr-${solr_version}.war; cp /tmp/${filename}/example/lib/ext/*.jar WEB-INF/lib",
+    command   =>  "jar xvf /tmp/${filename}/dist/solr-${solr_version}.war", #; cp /tmp/${filename}/example/lib/ext/*.jar WEB-INF/lib",
     cwd       =>  $solr_home,
     onlyif    =>  "test ! -d ${solr_home}/WEB-INF",
     require   =>  Exec['extract-solr'],
@@ -91,7 +92,8 @@ class solr::config(
   }
 
   solr::core { $cores:
-    require   =>  File["${jetty_home}/webapps/solr"],
+    core_conf_source_uri => $core_conf_source_uri,
+    require              =>  File["${jetty_home}/webapps/solr"],
   }
 }
 

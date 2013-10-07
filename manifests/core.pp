@@ -10,7 +10,8 @@
 # - Creates the data directory for the core
 #
 define solr::core(
-  $core_name = $title,
+  $core_name            = $title,
+  $core_conf_source_uri = $core_conf_source_uri,
 ) {
   include solr::params
 
@@ -26,8 +27,8 @@ define solr::core(
   #Copy its config over
   file { "${solr_home}/${core_name}/conf":
     ensure  => directory,
+    source  => $core_conf_source_uri,
     recurse => true,
-    source  => 'puppet:///modules/solr/conf',
     require => File["${solr_home}/${core_name}"],
   }
 

@@ -37,6 +37,7 @@
 #
 class solr (
   $cores                 = $solr::params::cores,
+  $core_conf_source_uri  = $solr::params::core_conf_source_uri,
   $jetty_home            = $solr::params::jetty_home,
   $solr_home             = $solr::params::solr_home,
   $solr_version          = $solr::params::solr_version,
@@ -48,6 +49,7 @@ class solr (
   class {'solr::install': } ->
   class {'solr::config':
     cores                  => $cores,
+    core_conf_source_uri   => $core_conf_source_uri,
     jetty_home             => $jetty_home,
     solr_home              => $solr_home,
     solr_version           => $solr_version,
