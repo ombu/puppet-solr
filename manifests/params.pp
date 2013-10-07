@@ -8,7 +8,7 @@
 class solr::params {
 
   $cores                 = ['default']
-  $core_conf_source_uri  = 'puppet:///modules/solr/conf',
+  $core_conf_source_uri  = 'puppet:///modules/solr/conf'
 
   $solr_version          = '4.5.0'
 
