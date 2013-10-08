@@ -38,6 +38,7 @@
 class solr (
   $cores                         = $solr::params::cores,
   $core_conf_source_uri_template = $solr::params::core_conf_source_uri_template,
+  $core_conf_ignore              = $solr::params::core_conf_ignore,
   $core_conf_example_dir         = $solr::params::core_conf_example_dir,
   $jetty_home                    = $solr::params::jetty_home,
   $solr_home                     = $solr::params::solr_home,
@@ -56,6 +57,7 @@ class solr (
   class {'solr::config':
     cores                         => $cores,
     core_conf_source_uri_template => $core_conf_source_uri_template,
+    core_conf_ignore              => $core_conf_ignore,
     core_conf_example_dir         => $core_conf_example_dir,
     jetty_home                    => $jetty_home,
     solr_home                     => $solr_home,

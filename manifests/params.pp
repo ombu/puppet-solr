@@ -9,7 +9,8 @@ class solr::params {
 
   $cores                         = ['default']
   $core_conf_source_uri_template = "file://<%= scope.lookupvar('solr::solr_home') -%>/core-conf-cache/<%= scope.lookupvar('solr::solr_version') -%>/conf"
-  $core_conf_example_dir         = "example/solr/collection1/conf"
+  $core_conf_ignore              = ''
+  $core_conf_example_dir         = 'example/solr/collection1/conf'
 
   $solr_version                  = '4.2.0'
 

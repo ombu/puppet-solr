@@ -11,7 +11,8 @@
 #
 define solr::core(
   $core_name            = $title,
-  $core_conf_source_uri = $core_conf_source_uri,
+  $core_conf_ignore     = $solr::params::core_conf_ignore,
+  $core_conf_source_uri = $solr::params::core_conf_source_uri,
 ) {
   include solr::params
 
@@ -28,6 +29,7 @@ define solr::core(
   file { "${solr_home}/${core_name}/conf":
     ensure  => directory,
     source  => $core_conf_source_uri,
+    ignore  => $core_conf_ignore,
     recurse => true,
     require => File["${solr_home}/${core_name}"],
   }

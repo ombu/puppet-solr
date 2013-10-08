@@ -15,6 +15,7 @@
 class solr::config(
   $cores                         = $solr::params::cores,
   $core_conf_source_uri_template = $solr::params::core_conf_source_uri_template,
+  $core_conf_ignore              = $solr::params::core_conf_ignore,
   $core_conf_example_dir         = $solr::params::core_conf_example_dir,
   $jetty_home                    = $solr::params::jetty_home,
   $solr_home                     = $solr::params::solr_home,
@@ -103,6 +104,7 @@ class solr::config(
   $core_conf_source_uri = inline_template($core_conf_source_uri_template)
 
   solr::core { $cores:
+    core_conf_ignore     => $core_conf_ignore,
     core_conf_source_uri => $core_conf_source_uri,
     require              => [File["${jetty_home}/webapps/solr"], Exec['cache-solr-core-conf']],
   }
