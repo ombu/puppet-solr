@@ -7,17 +7,18 @@
 #
 class solr::params {
 
-  $cores                 = ['default']
-  $core_conf_source_uri  = 'puppet:///modules/solr/conf'
+  $cores                         = ['default']
+  $core_conf_source_uri_template = "file://<%= scope.lookupvar('solr::solr_home') -%>/core-conf-cache/<%= scope.lookupvar('solr::solr_version') -%>/conf"
+  $core_conf_example_dir         = "example/solr/collection1/conf"
 
-  $solr_version          = '4.5.0'
+  $solr_version                  = '4.2.0'
 
-  $solr_home             = '/usr/share/solr'
-  $jetty_home            = '/usr/share/jetty'
+  $solr_home                     = '/usr/share/solr'
+  $jetty_home                    = '/usr/share/jetty'
 
-  $filename_template     = 'solr-<%= @solr_version -%>'
-  $archive_template      = '<%= @filename -%>.tgz'
-  $download_url_template = 'http://archive.apache.org/dist/lucene/solr/<%= @solr_version -%>/<%= @archive %>'
+  $filename_template             = 'solr-<%= @solr_version -%>'
+  $archive_template              = '<%= @filename -%>.tgz'
+  $download_url_template         = 'http://archive.apache.org/dist/lucene/solr/<%= @solr_version -%>/<%= @archive %>'
 
 }
 

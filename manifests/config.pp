@@ -13,14 +13,15 @@
 # - Links solr home directory to jetty webapps directory
 #
 class solr::config(
-  $cores                  = $solr::params::cores,
-  $core_conf_source_uri   =  $core_conf_source_uri,
-  $jetty_home             = $solr::params::jetty_home,
-  $solr_home              = $solr::params::solr_home,
-  $solr_version           = $solr::params::solr_version,
-  $filename_template      = $solr::params::filename_template,
-  $archive_template       = $solr::params::archive_template,
-  $download_url_template  = $solr::params::download_url_template
+  $cores                         = $solr::params::cores,
+  $core_conf_source_uri_template = $solr::params::core_conf_source_uri_template,
+  $core_conf_example_dir         = $solr::params::core_conf_example_dir,
+  $jetty_home                    = $solr::params::jetty_home,
+  $solr_home                     = $solr::params::solr_home,
+  $solr_version                  = $solr::params::solr_version,
+  $filename_template             = $solr::params::filename_template,
+  $archive_template              = $solr::params::archive_template,
+  $download_url_template         = $solr::params::download_url_template
 ) {
 
 
@@ -69,6 +70,14 @@ class solr::config(
     require   =>  Exec['extract-solr'],
   }
 
+  exec { 'cache-solr-core-conf':
+    path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
+    command   =>  "mkdir -p core-conf-cache/${solr_version}; cp -R /tmp/${filename}/${core_conf_example_dir} core-conf-cache/${solr_version}", #; cp /tmp/${filename}/example/lib/ext/*.jar WEB-INF/lib",
+    cwd       =>  $solr_home,
+    creates   =>  "${solr_home}/core-conf-cache/${solr_version}/conf",
+    require   =>  Exec['copy-solr'],
+  }
+
   file { '/var/lib/solr':
     ensure    => directory,
     owner     => 'jetty',
@@ -91,9 +100,11 @@ class solr::config(
     require   => File["${solr_home}/solr.xml"],
   }
 
+  $core_conf_source_uri = inline_template($core_conf_source_uri_template)
+
   solr::core { $cores:
     core_conf_source_uri => $core_conf_source_uri,
-    require              =>  File["${jetty_home}/webapps/solr"],
+    require              => [File["${jetty_home}/webapps/solr"], Exec['cache-solr-core-conf']],
   }
 }
 

@@ -36,14 +36,15 @@
 # Copyright 2012-2013 Vamsee Kanakala, unless otherwise noted.
 #
 class solr (
-  $cores                 = $solr::params::cores,
-  $core_conf_source_uri  = $solr::params::core_conf_source_uri,
-  $jetty_home            = $solr::params::jetty_home,
-  $solr_home             = $solr::params::solr_home,
-  $solr_version          = $solr::params::solr_version,
-  $filename_template     = $solr::params::filename_template,
-  $archive_template      = $solr::params::archive_template,
-  $download_url_template = $solr::params::download_url_template
+  $cores                         = $solr::params::cores,
+  $core_conf_source_uri_template = $solr::params::core_conf_source_uri_template,
+  $core_conf_example_dir         = $solr::params::core_conf_example_dir,
+  $jetty_home                    = $solr::params::jetty_home,
+  $solr_home                     = $solr::params::solr_home,
+  $solr_version                  = $solr::params::solr_version,
+  $filename_template             = $solr::params::filename_template,
+  $archive_template              = $solr::params::archive_template,
+  $download_url_template         = $solr::params::download_url_template
 ) inherits solr::params {
 
   File {
@@ -53,14 +54,15 @@ class solr (
 
   class {'solr::install': } ->
   class {'solr::config':
-    cores                  => $cores,
-    core_conf_source_uri   => $core_conf_source_uri,
-    jetty_home             => $jetty_home,
-    solr_home              => $solr_home,
-    solr_version           => $solr_version,
-    filename_template      => $filename_template,
-    archive_template       => $archive_template,
-    download_url_template  => $download_url_template
+    cores                         => $cores,
+    core_conf_source_uri_template => $core_conf_source_uri_template,
+    core_conf_example_dir         => $core_conf_example_dir,
+    jetty_home                    => $jetty_home,
+    solr_home                     => $solr_home,
+    solr_version                  => $solr_version,
+    filename_template             => $filename_template,
+    archive_template              => $archive_template,
+    download_url_template         => $download_url_template
   } ~>
   class {'solr::service': } ->
   Class['solr']
