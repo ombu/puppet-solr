@@ -103,13 +103,13 @@ class solr::config(
     require   => File["${solr_home}/solr.xml"],
   }
 
-  if $cores {
-    $core_conf_source_uri = inline_template($core_conf_source_uri_template)
-    solr::core { $cores:
-      core_conf_ignore     => $core_conf_ignore,
-      core_conf_source_uri => $core_conf_source_uri,
-      require              => [File["${jetty_home}/webapps/solr"], Exec['cache-solr-core-conf']],
-    }
+  $core_conf_source_uri = inline_template($core_conf_source_uri_template)
+
+  solr::core { $cores:
+    core_conf_ignore     => $core_conf_ignore,
+    core_conf_source_uri => $core_conf_source_uri,
+    require              => [File["${jetty_home}/webapps/solr"], Exec['cache-solr-core-conf']],
   }
+
 }
 
