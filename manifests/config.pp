@@ -46,6 +46,7 @@ class solr::config(
 
   # download only if WEB-INF is not present and tgz file is not in /tmp:
   exec { 'solr-download':
+    path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
     command => "wget ${download_url}",
     cwd     => '/tmp',
     creates => "/tmp/${archive}",
@@ -65,7 +66,8 @@ class solr::config(
   # have to copy logging jars separately from solr 4.3 onwards
   exec { 'copy-solr':
     path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
-    command   =>  "jar xvf /tmp/${filename}/dist/solr-${solr_version}.war", #; cp /tmp/${filename}/example/lib/ext/*.jar WEB-INF/lib",
+    #command   =>  "jar xvf /tmp/${filename}/dist/solr-${solr_version}.war",
+    command  =>  "jar xvf /tmp/${filename}/dist/solr-${solr_version}.war && cp /tmp/${filename}/example/lib/ext/*.jar WEB-INF/lib",
     cwd       =>  $solr_home,
     onlyif    =>  "test ! -d ${solr_home}/WEB-INF",
     require   =>  Exec['extract-solr'],
@@ -101,12 +103,13 @@ class solr::config(
     require   => File["${solr_home}/solr.xml"],
   }
 
-  $core_conf_source_uri = inline_template($core_conf_source_uri_template)
-
-  solr::core { $cores:
-    core_conf_ignore     => $core_conf_ignore,
-    core_conf_source_uri => $core_conf_source_uri,
-    require              => [File["${jetty_home}/webapps/solr"], Exec['cache-solr-core-conf']],
+  if $cores {
+    $core_conf_source_uri = inline_template($core_conf_source_uri_template)
+    solr::core { $cores:
+      core_conf_ignore     => $core_conf_ignore,
+      core_conf_source_uri => $core_conf_source_uri,
+      require              => [File["${jetty_home}/webapps/solr"], Exec['cache-solr-core-conf']],
+    }
   }
 }
 
